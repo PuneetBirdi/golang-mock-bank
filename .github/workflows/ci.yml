@@ -32,7 +32,6 @@ jobs:
 
     - name: Install Dependency - golang-migrate
       run: |
-        sudo apt install curl
         curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate-4.15.2.zip | tar xvz
         sudo mv migrate.linux-amd64 /usr/bin/migrate
         which migrate
