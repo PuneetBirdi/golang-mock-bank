@@ -28,6 +28,12 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    - name: Install Dependency - golang-migrate
+      run: | 
+        curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate-4.15.2.zip | tar xvz
+        sudo mv migrate.linux-amd64 /usr/bin
+        which migrate
+
     - name: Run Database Migrations
       run: make migrateup
 
