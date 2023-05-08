@@ -9,10 +9,27 @@ on:
 jobs:
 
   build:
-    name: Run Tests
+    name: Run Tests 
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: bank-postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Run Database Migrations
+      run: make migrateup
 
     - name: Set up Go
       uses: actions/setup-go@v3
