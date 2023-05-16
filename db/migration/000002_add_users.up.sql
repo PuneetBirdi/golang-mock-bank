@@ -1,9 +1,9 @@
-CREATE TYPE account_types AS ENUM (
+CREATE TYPE ACCOUNTS_ENUM AS ENUM (
   'ASSET',
   'LIABILITY'
 );
 
-CREATE TYPE product_types AS ENUM (
+CREATE TYPE PRODUCTS_ENUM AS ENUM (
   'CREDIT_CARD',
   'CHEQUING',
   'SAVINGS'
@@ -19,5 +19,5 @@ CREATE TABLE "users" (
 );
 ALTER TABLE "accounts" ADD FOREIGN KEY ("owner") REFERENCES "users" ("id");
 
-ALTER TABLE "accounts" ADD COLUMN account_type account_types;
-ALTER TABLE "accounts" ADD COLUMN product_type product_types;
+ALTER TABLE "accounts" ADD COLUMN account_type ACCOUNTS_ENUM;
+ALTER TABLE "accounts" ADD COLUMN product_type PRODUCTS_ENUM;
