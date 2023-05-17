@@ -42,4 +42,14 @@ func RandomCurrency() string {
 	return currencies[rand.Intn(n)]
 }
 
+func RandomAccountType() string {
+	accountTypes := []string{"ASSET", "LIABILITY"}
+	n := len(accountTypes)
+	return accountTypes[rand.Intn(n)]
+}
 
+func RandomProductType() string {
+	productTypes := []string{"CREDIT_CARD", "CHEQUING", "SAVINGS"}
+	n := len(productTypes)
+	return productTypes[rand.Intn(n)]
+}

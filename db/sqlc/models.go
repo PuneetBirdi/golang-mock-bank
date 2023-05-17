@@ -5,15 +5,104 @@
 package db
 
 import (
+	"database/sql/driver"
+	"fmt"
 	"time"
 )
 
+type AccountsEnum string
+
+const (
+	AccountsEnumASSET     AccountsEnum = "ASSET"
+	AccountsEnumLIABILITY AccountsEnum = "LIABILITY"
+)
+
+func (e *AccountsEnum) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = AccountsEnum(s)
+	case string:
+		*e = AccountsEnum(s)
+	default:
+		return fmt.Errorf("unsupported scan type for AccountsEnum: %T", src)
+	}
+	return nil
+}
+
+type NullAccountsEnum struct {
+	AccountsEnum AccountsEnum
+	Valid        bool // Valid is true if AccountsEnum is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullAccountsEnum) Scan(value interface{}) error {
+	if value == nil {
+		ns.AccountsEnum, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.AccountsEnum.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullAccountsEnum) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.AccountsEnum), nil
+}
+
+type ProductsEnum string
+
+const (
+	ProductsEnumCREDITCARD ProductsEnum = "CREDIT_CARD"
+	ProductsEnumCHEQUING   ProductsEnum = "CHEQUING"
+	ProductsEnumSAVINGS    ProductsEnum = "SAVINGS"
+)
+
+func (e *ProductsEnum) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = ProductsEnum(s)
+	case string:
+		*e = ProductsEnum(s)
+	default:
+		return fmt.Errorf("unsupported scan type for ProductsEnum: %T", src)
+	}
+	return nil
+}
+
+type NullProductsEnum struct {
+	ProductsEnum ProductsEnum
+	Valid        bool // Valid is true if ProductsEnum is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullProductsEnum) Scan(value interface{}) error {
+	if value == nil {
+		ns.ProductsEnum, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.ProductsEnum.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullProductsEnum) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.ProductsEnum), nil
+}
+
 type Account struct {
-	ID        int64     `json:"id"`
-	Owner     string    `json:"owner"`
-	Balance   int64     `json:"balance"`
-	Currency  string    `json:"currency"`
-	CreatedAt time.Time `json:"created_at"`
+	ID          int64        `json:"id"`
+	Owner       int64        `json:"owner"`
+	Balance     int64        `json:"balance"`
+	Currency    string       `json:"currency"`
+	CreatedAt   time.Time    `json:"created_at"`
+	AccountType AccountsEnum `json:"account_type"`
+	ProductType ProductsEnum `json:"product_type"`
 }
 
 type Entry struct {
@@ -31,4 +120,13 @@ type Transfer struct {
 	// must be positive
 	Amount    int64     `json:"amount"`
 	CreatedAt time.Time `json:"created_at"`
+}
+
+type User struct {
+	ID                int64     `json:"id"`
+	FullName          string    `json:"full_name"`
+	HashedPassword    string    `json:"hashed_password"`
+	PasswordChangedAt time.Time `json:"password_changed_at"`
+	Email             string    `json:"email"`
+	CreatedAt         time.Time `json:"created_at"`
 }

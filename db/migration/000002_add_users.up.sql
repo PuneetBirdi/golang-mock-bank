@@ -19,5 +19,5 @@ CREATE TABLE "users" (
 );
 ALTER TABLE "accounts" ADD FOREIGN KEY ("owner") REFERENCES "users" ("id");
 
-ALTER TABLE "accounts" ADD COLUMN account_type ACCOUNTS_ENUM;
-ALTER TABLE "accounts" ADD COLUMN product_type PRODUCTS_ENUM;
+ALTER TABLE "accounts" ADD COLUMN account_type ACCOUNTS_ENUM NOT NULL;
+ALTER TABLE "accounts" ADD COLUMN product_type PRODUCTS_ENUM NOT NULL;
