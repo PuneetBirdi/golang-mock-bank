@@ -1,3 +1,6 @@
+ALTER TABLE "accounts" DROP COLUMN IF EXISTS "product_type";
+ALTER TABLE "accounts" DROP COLUMN IF EXISTS "account_type";
+
 CREATE TYPE PRODUCT_TYPE_ENUM AS ENUM (
 	'ASSET',
 	'LIABILITY'
@@ -7,12 +10,6 @@ DROP TYPE IF EXISTS PRODUCTS_ENUM;
 DROP TYPE IF EXISTS ACCOUNTS_ENUM;
 DROP TYPE IF EXISTS accounts_enum;
 DROP TYPE IF EXISTS products_enum;
-
-ALTER TABLE "accounts"
-	DROP COLUMN IF EXISTS "account_type";
-
-ALTER TABLE "accounts"
-	DROP COLUMN IF EXISTS "product_type";
 
 CREATE TABLE "products" (
 	"id" bigserial PRIMARY KEY,
