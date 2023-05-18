@@ -2,9 +2,10 @@
 INSERT INTO accounts (
     owner,
     balance,
-    currency
+    currency,
+		product_id
 ) VALUES (
-    $1, $2, $3
+    $1, $2, $3, $4
 ) RETURNING *;
 
 -- name: GetAccount :one

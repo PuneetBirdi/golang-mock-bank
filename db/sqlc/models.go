@@ -5,15 +5,60 @@
 package db
 
 import (
+	"database/sql/driver"
+	"fmt"
 	"time"
 )
 
+type ProductTypeEnum string
+
+const (
+	ProductTypeEnumASSET     ProductTypeEnum = "ASSET"
+	ProductTypeEnumLIABILITY ProductTypeEnum = "LIABILITY"
+)
+
+func (e *ProductTypeEnum) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = ProductTypeEnum(s)
+	case string:
+		*e = ProductTypeEnum(s)
+	default:
+		return fmt.Errorf("unsupported scan type for ProductTypeEnum: %T", src)
+	}
+	return nil
+}
+
+type NullProductTypeEnum struct {
+	ProductTypeEnum ProductTypeEnum
+	Valid           bool // Valid is true if ProductTypeEnum is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullProductTypeEnum) Scan(value interface{}) error {
+	if value == nil {
+		ns.ProductTypeEnum, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.ProductTypeEnum.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullProductTypeEnum) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.ProductTypeEnum), nil
+}
+
 type Account struct {
 	ID        int64     `json:"id"`
-	Owner     string    `json:"owner"`
+	Owner     int64     `json:"owner"`
 	Balance   int64     `json:"balance"`
 	Currency  string    `json:"currency"`
 	CreatedAt time.Time `json:"created_at"`
+	ProductID int64     `json:"product_id"`
 }
 
 type Entry struct {
@@ -24,6 +69,13 @@ type Entry struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+type Product struct {
+	ID          int64           `json:"id"`
+	ProductType ProductTypeEnum `json:"product_type"`
+	ProductName string          `json:"product_name"`
+	CreatedAt   time.Time       `json:"created_at"`
+}
+
 type Transfer struct {
 	ID            int64 `json:"id"`
 	FromAccountID int64 `json:"from_account_id"`
@@ -31,4 +83,13 @@ type Transfer struct {
 	// must be positive
 	Amount    int64     `json:"amount"`
 	CreatedAt time.Time `json:"created_at"`
+}
+
+type User struct {
+	ID                int64     `json:"id"`
+	FullName          string    `json:"full_name"`
+	HashedPassword    string    `json:"hashed_password"`
+	PasswordChangedAt time.Time `json:"password_changed_at"`
+	Email             string    `json:"email"`
+	CreatedAt         time.Time `json:"created_at"`
 }
