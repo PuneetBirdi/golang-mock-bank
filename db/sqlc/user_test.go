@@ -3,14 +3,18 @@ package db
 import (
 	"context"
 	"testing"
+
 	"github.com/PuneetBirdi/golang-bank/util"
 	"github.com/stretchr/testify/require"
 )
 
 func createRandomUser(t *testing.T) User {
+	hashedPassword, err := util.HashPassword(util.RandomString(8))
+	require.NoError(t, err)
+
 	arg := CreateUserParams{
 		FullName: (util.RandomString(5) + " " + util.RandomString(8)),
-		HashedPassword: util.RandomString(16),
+		HashedPassword: hashedPassword,
 		Email: (util.RandomString(5) + "@gmail.com"),
 	}
 
