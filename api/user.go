@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"time"
 
 	db "github.com/PuneetBirdi/golang-bank/db/sqlc"
 	"github.com/PuneetBirdi/golang-bank/util"
@@ -15,6 +16,13 @@ type createUserRequest struct {
 	Email string `json:"email" binding:"required,email"`
 }
 
+type createUserResponse struct {
+	ID                int64     `json:"id"`
+	FullName          string    `json:"full_name"`
+	PasswordChangedAt time.Time `json:"password_changed_at"`
+	Email             string    `json:"email"`
+	CreatedAt         time.Time `json:"created_at"`
+}
 func (server *Server) createUser(ctx *gin.Context) {
 	var req createUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -46,7 +54,16 @@ func (server *Server) createUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, user)
+	response := createUserResponse{
+		ID: user.ID,
+		FullName: user.FullName,
+		PasswordChangedAt: user.PasswordChangedAt,
+		Email: user.Email,
+		CreatedAt: user.CreatedAt,
+	}
+
+
+	ctx.JSON(http.StatusOK, response)
 }
 
 
