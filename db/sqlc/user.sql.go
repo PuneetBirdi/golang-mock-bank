@@ -51,11 +51,19 @@ func (q *Queries) DeleteUser(ctx context.Context, dollar_1 interface{}) error {
 
 const getUser = `-- name: GetUser :one
 SELECT id, full_name, hashed_password, password_changed_at, email, created_at FROM users
-WHERE id = $1 LIMIT 1
+WHERE 
+	id = $1 OR 
+	email = $2
+LIMIT 1
 `
 
-func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
-	row := q.db.QueryRowContext(ctx, getUser, id)
+type GetUserParams struct {
+	ID    int64  `json:"id"`
+	Email string `json:"email"`
+}
+
+func (q *Queries) GetUser(ctx context.Context, arg GetUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUser, arg.ID, arg.Email)
 	var i User
 	err := row.Scan(
 		&i.ID,
