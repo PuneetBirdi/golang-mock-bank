@@ -2,28 +2,35 @@ package token
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 )
 
+const minSecretKeySize = 32
+
+// JWTMaker is a JSON Web Token maker
 type JWTMaker struct {
 	secretKey string
 }
 
+// NewJWTMaker creates a new JWTMaker
 func NewJWTMaker(secretKey string) (Maker, error) {
+	if len(secretKey) < minSecretKeySize {
+		return nil, fmt.Errorf("invalid key size: must be at least %d characters", minSecretKeySize)
+	}
 	return &JWTMaker{secretKey}, nil
 }
 
-func (maker *JWTMaker) CreateToken(username string, duration time.Duration) (string, error){
-	payload, err := NewPayload(username, duration)
+func (maker *JWTMaker) CreateToken(userID int64, duration time.Duration) (string, *Payload, error){
+	payload, err := NewPayload(userID, duration)
 	if err!= nil {
-		return "", err
+		return "", payload, err
 	}
-	
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
-
-	return jwtToken.SignedString([]byte(maker.secretKey))
+	token, err := jwtToken.SignedString([]byte(maker.secretKey))
+	return token, payload, err
 }
 
 func (maker *JWTMaker) VerifyToken(token string) (*Payload, error) {
