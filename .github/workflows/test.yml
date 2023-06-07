@@ -1,8 +1,6 @@
 name: UNIT TESTS
 
 on:
-  push:
-    branches: [ "master", "develop" ]
   pull_request:
     branches: [ "master", "develop" ]
 
