@@ -1,4 +1,8 @@
 name: DEPLOY TO PRODUCTION
+permissions:
+  id-token: write
+  contents: read
+
 
 on:
   push:
