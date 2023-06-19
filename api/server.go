@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/gin-contrib/cors"
 )
 
 type Server struct {
@@ -40,6 +41,8 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 
 func (server *Server) setupRouter() {
 	router := gin.Default()
+
+	router.Use(cors.Default())
 
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
 	
