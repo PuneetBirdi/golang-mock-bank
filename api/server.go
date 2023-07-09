@@ -64,7 +64,8 @@ func (server *Server) Start(address string) error {
 
 
 func errorResponse(err error) gin.H {
-	return gin.H{"error": err.Error()}
+	formattedError := util.ParseError(err)
+	return gin.H{"error": formattedError.Error()}
 }
 
 func defaultResponse(ctx *gin.Context) {
@@ -72,7 +73,6 @@ func defaultResponse(ctx *gin.Context) {
 }
 
 func CORS() gin.HandlerFunc {
-	fmt.Println("HIT CORS MIDDLEWARE")
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")

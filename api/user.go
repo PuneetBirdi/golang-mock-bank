@@ -2,6 +2,7 @@ package api
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -13,8 +14,8 @@ import (
 
 type createUserRequest struct {
 	FullName    string `json:"full_name" binding:"required"`
-	Password string `json:"password" binding:"required,min=6"`
-	Email string `json:"email" binding:"required,email"`
+	Password    string `json:"password" binding:"required,min=6"`
+	Email       string `json:"email" binding:"required,email"`
 }
 
 type userResponse struct {
@@ -96,6 +97,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 
 	user, err := server.store.GetUser(ctx, args)
 	if err != nil {
+		fmt.Println(err)
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
